@@ -96,7 +96,7 @@ const productSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Warehouse",
     },
-    wholeseller: {
+    wholeseler: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
