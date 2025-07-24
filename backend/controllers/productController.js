@@ -1,5 +1,6 @@
 const Product = require("../models/productModel");
 const cloudinary = require("../utils/cloudinary");
+const Category = require("../models/categoryModel");
 
 exports.createProduct = async (req, res) => {
   try {
@@ -30,6 +31,16 @@ exports.createProduct = async (req, res) => {
       productVariantType,
       warehouseLocation,
     } = req.body;
+
+    // Validate category
+    const existingCategory = await Category.findById(category);
+    if (!existingCategory) {
+      return res.status(400).json({ message: "Invalid category ID" });
+    }
+    const existingSubcategory = await Subcategory.findById(subcategory);
+    if (!existingSubcategory) {
+      return res.status(400).json({ message: "Invalid subcategory ID" });
+    }
 
     // Check if images are uploaded
     if (!req.files || req.files.length === 0) {
@@ -203,5 +214,63 @@ exports.deleteProduct = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.getAllProducts = async (req, res) => {
+  try {
+    const products = await Product.find()
+      .populate("category", "name")
+      .populate("subcategory", "name");
+    res.status(200).json(products);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to get products", error: error.message });
+  }
+};
+
+exports.getSingleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id)
+      .populate("category", "name")
+      .populate("subcategory", "name");
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+exports.getProductsByCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    const products = await Product.find({ category: categoryId })
+      .populate("category", "name")
+      .populate("subcategory", "name");
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch products by category", error });
+  }
+};
+
+exports.getProductsBySubcategory = async (req, res) => {
+  try {
+    const { subcategoryId } = req.params;
+
+    const products = await Product.find({ subcategory: subcategoryId })
+      .populate("category", "name")
+      .populate("subcategory", "name");
+
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch products by subcategory", error });
   }
 };

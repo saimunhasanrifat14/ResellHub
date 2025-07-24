@@ -7,6 +7,10 @@ const {
   createProduct,
   updateProduct,
   deleteProduct,
+  getAllProducts,
+  getSingleProduct,
+  getProductsByCategory,
+  getProductsBySubcategory,
 } = require("../controllers/productController");
 
 router.post(
@@ -29,5 +33,9 @@ router.delete(
   checkRole("wholesaler"),
   deleteProduct
 );
+router.get("/all", getAllProducts);
+router.get("/single-product/:id", getSingleProduct);
+router.get("/by-category/:categoryId", getProductsByCategory);
+router.get("/by-subcategory/:subcategoryId", getProductsBySubcategory);
 
 module.exports = router;

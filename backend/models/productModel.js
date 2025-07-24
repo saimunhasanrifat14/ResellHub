@@ -15,10 +15,22 @@ const productSchema = new mongoose.Schema(
         public_id: String,
       },
     ],
-    rating: {
+    reviews: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Review",
+      },
+    ],
+    averageRating: {
       type: Number,
       default: 0,
+      min: 0,
       max: 5,
+    },
+    numOfReviews: {
+      type: Number,
+      default: 0,
+      min: 0,
     },
     wholesalePrice: {
       type: Number,
@@ -29,11 +41,14 @@ const productSchema = new mongoose.Schema(
       max: 100,
     },
     category: {
-      type:String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
     subcategory: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "SubCategory",
+      ref: "Subcategory",
+      required: true,
     },
     stock: {
       type: Number,
@@ -57,12 +72,6 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: true, // true means In Stock
     },
-    reviews: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Review",
-      },
-    ],
     returnPolicy: {
       type: String,
     },
